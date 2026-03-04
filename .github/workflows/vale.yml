@@ -5,7 +5,7 @@ on:
     paths:
       - "**.md"
       - ".vale.ini"
-      - "styles/**"
+
   push:
     branches: [main]
     paths:
