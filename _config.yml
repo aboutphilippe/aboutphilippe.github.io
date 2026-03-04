@@ -1,5 +1,8 @@
 title: About Philippe
-description: Notes, projects, and learnings
+description: Notes, projects, and learnings. Philippe Brule — Co-founder & CTO at Restack, 3× founder, building AI systems and infrastructure.
+url: https://aboutphilippe.com
+author: Philippe Brule
 theme: minima
 markdown: kramdown
 permalink: /:year/:month/:day/:title/
+og_image: /assets/og.png

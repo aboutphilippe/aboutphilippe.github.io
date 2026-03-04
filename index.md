@@ -3,27 +3,14 @@ layout: home
 title: Home
 ---
 
-## Writing
+## About
 
-{% for post in site.posts %}
-- [{{ post.title }}]({{ post.url }})
-{% endfor %}
+San Francisco–based and 3× founder, currently Co-founder & CTO at [Restack](https://restack.io). Coding since 1997, building high-performance infrastructure, distributed systems, and developer tooling. Focus on AI systems, open-source infrastructure, and scalable enterprise platforms. Born in France, married to Priyanka, founder at [nubrain](https://nubrain.io). Often found traveling the world, sailing, or flying together.
 
 ---
-
 
 ## Links
 
-- GitHub: https://github.com/aboutphilippe
-- LinkedIn: https://linkedin.com/in/philippebrule
-- X: https://x.com/aboutphilippe
-
----
-
-## About Philippe
-
-San Francisco–based and 3× founder, currently Co-founder & CTO at Restack.
-Coding since 1997, building high-performance infrastructure, distributed systems, and developer tooling.
-Focus on AI systems, open-source infrastructure, and scalable enterprise platforms.
-Originally from France, married to Priyanka, founder at NuBrain.
-Often found traveling the world, sailing, or flying together.
+- GitHub: [github.com/aboutphilippe](https://github.com/aboutphilippe)
+- LinkedIn: [linkedin.com/in/philippebrule](https://linkedin.com/in/philippebrule)
+- X: [x.com/aboutphilippe](https://x.com/aboutphilippe)

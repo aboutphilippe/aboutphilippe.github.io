@@ -1,0 +1,28 @@
+# Jekyll
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
+# Bundler
+.bundle/
+vendor/bundle/
+
+# Ruby
+*.gem
+*.rbc
+.ruby-gemset
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vale synced packages (run vale sync to fetch)
+styles
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+.sass-cache

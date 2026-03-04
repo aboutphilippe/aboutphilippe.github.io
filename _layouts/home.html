@@ -1,0 +1,18 @@
+---
+layout: default
+---
+
+{% if site.posts.size > 0 %}
+<hr />
+<h2>Writing</h2>
+<ul>
+  {% for post in site.posts %}
+  <li>
+    <h3>
+      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      <span class="muted">{{ post.date | date: "%b %Y" }}</span>
+    </h3>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %} {{ content }}
