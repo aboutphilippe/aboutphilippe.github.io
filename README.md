@@ -35,3 +35,5 @@ vale .
 - Toggle rules in `.vale.ini` (for example, `Google.We = warning`, `Vale.Spelling = NO`). See [Vale docs](https://vale.sh/docs/).
 
 A GitHub Action runs Vale on every PR that touches Markdown or Vale config; the job runs `vale sync` then Vale, and fails on errors.
+
+test
