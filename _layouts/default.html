@@ -93,6 +93,9 @@
       * {
         box-sizing: border-box;
       }
+      html {
+        scroll-behavior: smooth;
+      }
       :root {
         --bg: #fff;
         --text: #1a1a1a;
@@ -128,6 +131,8 @@
         margin-left: auto;
         margin-right: auto;
         text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
       a {
         color: var(--link);
@@ -199,6 +204,16 @@
         font-size: 1.1rem;
         margin: 1.5rem 0 0.5rem;
       }
+      article h2 a,
+      article h3 a {
+        color: inherit;
+        text-decoration: none;
+      }
+      article h2 a:hover,
+      article h3 a:hover {
+        color: var(--link);
+        text-decoration: underline;
+      }
       p {
         margin: 0 0 1rem;
       }
@@ -255,9 +270,58 @@
         background: var(--border);
         font-weight: 600;
       }
+      /* Floating TOC (posts, desktop only) */
+      .toc-sidebar {
+        display: none;
+      }
+      @media (min-width: 1280px) {
+        .toc-sidebar.toc-has-items {
+          display: block;
+          position: fixed;
+          top: 6rem;
+          left: calc(50vw + 24rem + 1.5rem);
+          width: 12rem;
+          max-height: calc(100vh - 8rem);
+          overflow-y: auto;
+          font-size: 0.85rem;
+          line-height: 1.5;
+        }
+        .toc-nav {
+          padding: 0.5rem 0;
+          border-left: 0px solid var(--border);
+          padding-left: 1rem;
+        }
+        .toc-nav ul {
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+        .toc-nav li {
+          margin: 0.25rem 0;
+        }
+        .toc-nav a {
+          color: var(--muted);
+          text-decoration: none;
+        }
+        .toc-nav a:hover,
+        .toc-nav a.is-active {
+          color: var(--link);
+        }
+        .toc-nav .toc-h3 {
+          padding-left: 0.75rem;
+          margin-top: 0.15rem;
+        }
+        .toc-nav ul ul {
+          margin: 0.15rem 0 0;
+          padding: 0 0 0 0.5rem;
+          list-style: none;
+          border-left: 1px solid var(--border);
+          margin-left: 0.25rem;
+        }
+      }
     </style>
   </head>
-  <body>
+  <body class="{% if page.layout == 'post' %}post-layout{% endif %}">
     <header>
       <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
       <button
