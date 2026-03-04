@@ -1,0 +1,5 @@
+title: About Philippe
+description: Notes, projects, and learnings
+theme: minima
+markdown: kramdown
+permalink: /:year/:month/:day/:title/
