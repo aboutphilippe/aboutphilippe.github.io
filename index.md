@@ -5,7 +5,9 @@ title: Home
 
 ## Writing
 
-- [Hello World: Context Planes — A Point of View](/2026/03/04/context-planes-hello-world/)
+{% for post in site.posts %}
+- [{{ post.title }}]({{ post.url }})
+{% endfor %}
 
 ---
 
