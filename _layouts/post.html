@@ -8,3 +8,17 @@ layout: default
   {{ content }}
 </article>
 <p class="muted"><a href="{{ '/' | relative_url }}">← Back</a></p>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    document.querySelectorAll("pre code.language-mermaid").forEach(function (block) {
+      var pre = block.closest("pre");
+      var div = document.createElement("div");
+      div.className = "mermaid";
+      div.textContent = block.textContent;
+      pre.parentNode.replaceChild(div, pre);
+    });
+    mermaid.initialize({ startOnLoad: false, theme: "neutral" });
+    mermaid.run({ querySelector: ".mermaid", suppressErrors: true });
+  })();
+</script>
