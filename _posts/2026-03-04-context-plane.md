@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "Hello World: Context Planes — A Point of View"
+title: "Context Plane — A Point of View"
 ---
 
-# Hello World: Context Planes — A Point of View
+# Context Plane — A Point of View
 
-Goal: introduce my perspective on context planes for AI agents, sketch an architecture I believe in, and share early findings and benchmarks.
+Goal: introduce my perspective on context plane for AI agents, sketch an architecture I believe in, and share early findings and benchmarks.
 
 ---
 
-## Why I care about context planes
+## Why I care about context plane
 
 AI agents need context. Not “more tokens” — **the right context**, for the right entity, at the right time. Today we often solve that by stuffing prompts, calling five APIs, or maintaining a separate “context service” that nobody wants to own. I think there’s a cleaner primitive: a **context plane** — a deterministic, read-optimized view of an entity’s timeline that agents can query with one mental model and one API.
 
@@ -61,7 +61,7 @@ Cheap append-only writes, lifecycle-friendly for S3, and easy to reason about fo
 
 ## Who is this for?
 
-A good reference use case is what Vercel’s GTM team did with their corpus ([turbopuffer Vercel case study](https://turbopuffer.com/customers/vercel)): Gong, Slack, Salesforce per Salesforce account, so AI lead agents can search an account’s full history at runtime. One index per account, hybrid (BM25 + vector) search, agents with a search tool. Context planes target that same shape: **entity = account/user/lead**, **namespace per entity**, **hybrid search**, **cold/warm economics**. Internal tools, GTM, support, and product — anywhere “give me the best context for this entity” is the question.
+A good reference use case is what Vercel’s GTM team did with their corpus ([turbopuffer Vercel case study](https://turbopuffer.com/customers/vercel)): Gong, Slack, Salesforce per Salesforce account, so AI lead agents can search an account’s full history at runtime. One index per account, hybrid (BM25 + vector) search, agents with a search tool. Context plane target that same shape: **entity = account/user/lead**, **namespace per entity**, **hybrid search**, **cold/warm economics**. Internal tools, GTM, support, and product — anywhere “give me the best context for this entity” is the question.
 
 ---
 
