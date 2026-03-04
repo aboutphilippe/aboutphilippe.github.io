@@ -2,12 +2,19 @@
 layout: default
 ---
 
-<article>
-  <h1>{{ page.title }}</h1>
-  <p class="muted">{{ page.date | date: "%B %d, %Y" }}</p>
-  {{ content }}
-</article>
-<p class="muted"><a href="{{ '/' | relative_url }}">← Back</a></p>
+<div class="post-with-toc">
+  <aside id="toc-sidebar" class="toc-sidebar" aria-label="Table of contents">
+    <nav class="toc-nav"></nav>
+  </aside>
+  <div class="post-content">
+    <article id="post-top">
+      <h1>{{ page.title }}</h1>
+      <p class="muted">{{ page.date | date: "%B %d, %Y" }}</p>
+      {{ content }}
+    </article>
+    <p class="muted"><a href="{{ '/' | relative_url }}">← Back</a></p>
+  </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" crossorigin="anonymous"></script>
 <script>
   (function () {
@@ -20,5 +27,68 @@ layout: default
     });
     mermaid.initialize({ startOnLoad: false, theme: "neutral" });
     mermaid.run({ querySelector: ".mermaid", suppressErrors: true });
+  })();
+</script>
+<script>
+  (function () {
+    var article = document.querySelector(".post-content article");
+    var nav = document.querySelector(".toc-nav");
+    if (!article || !nav) return;
+    var ul = document.createElement("ul");
+    var titleLi = document.createElement("li");
+    var titleLink = document.createElement("a");
+    titleLink.href = "#post-top";
+    titleLink.textContent = document.querySelector("article h1").textContent;
+    titleLi.appendChild(titleLink);
+    ul.appendChild(titleLi);
+    var headings = article.querySelectorAll("h2, h3");
+    headings.forEach(function (h) {
+      var id = h.id || (h.textContent.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""));
+      if (!h.id) h.id = id;
+      var link = document.createElement("a");
+      link.href = "#" + id;
+      link.setAttribute("aria-label", "Link to this section");
+      while (h.firstChild) link.appendChild(h.firstChild);
+      h.appendChild(link);
+      var li = document.createElement("li");
+      li.className = h.tagName === "H3" ? "toc-h3" : "";
+      var a = document.createElement("a");
+      a.href = "#" + id;
+      a.textContent = h.textContent;
+      li.appendChild(a);
+      if (h.tagName === "H2") {
+        ul.appendChild(li);
+      } else {
+        var parentUl = ul.querySelector("li:last-child");
+        if (!parentUl) ul.appendChild(li);
+        else {
+          var nested = parentUl.querySelector("ul");
+          if (!nested) {
+            nested = document.createElement("ul");
+            parentUl.appendChild(nested);
+          }
+          nested.appendChild(li);
+        }
+      }
+    });
+    nav.appendChild(ul);
+    document.getElementById("toc-sidebar").classList.add("toc-has-items");
+    var observed = [article];
+    headings.forEach(function (h) { observed.push(h); });
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id || "post-top";
+          nav.querySelectorAll("a").forEach(function (a) {
+            a.classList.toggle("is-active", a.getAttribute("href") === "#" + id);
+          });
+        });
+      },
+      { rootMargin: "-80px 0px -60% 0px", threshold: 0 }
+    );
+    observed.forEach(function (el) {
+      observer.observe(el);
+    });
   })();
 </script>
