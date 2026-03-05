@@ -16,8 +16,10 @@ vendor/bundle/
 .DS_Store
 Thumbs.db
 
-# Vale synced packages (run vale sync to fetch)
-styles
+# Vale: synced packages go in styles/ (vale sync). Only styles/Personal/ is committed.
+styles/*
+!styles/Personal/
+!styles/Personal/**
 
 # IDE
 .idea/

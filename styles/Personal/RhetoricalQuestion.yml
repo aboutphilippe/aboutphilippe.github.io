@@ -1,0 +1,7 @@
+# Personal voice: encourage at least one question (rhetorical or not) to engage the reader
+extends: occurrence
+message: "Consider adding a rhetorical question or a direct question to the reader. Found %s; suggest at least 1."
+level: suggestion
+scope: text
+min: 1
+token: '\?'

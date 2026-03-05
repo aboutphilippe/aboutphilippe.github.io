@@ -1,0 +1,11 @@
+# Personal voice: range constructions often sound AI-ish
+extends: existence
+message: "Range construction: '%s' — consider a more direct phrasing."
+level: suggestion
+tokens:
+  - 'ranging from .+ to'
+  - 'between .+ and'
+  - 'from .+ to'
+  - 'spans from .+ to'
+  - 'varies from .+ to'
+  - 'extends from .+ to'

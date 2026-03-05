@@ -1,0 +1,10 @@
+# Personal voice: redundant "in my opinion" / "I think" when you're the author
+extends: existence
+message: "Redundant: '%s' — you're the author, own it."
+level: suggestion
+ignorecase: true
+tokens:
+  - in my opinion
+  - i think that
+  - i believe that
+  - it seems to me that

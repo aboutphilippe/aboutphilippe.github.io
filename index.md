@@ -5,7 +5,7 @@ title: Home
 
 ## About
 
-San Francisco–based and 3× founder, currently Co-founder & CTO at [Restack](https://restack.io). Coding since 1997, building high-performance infrastructure, distributed systems, and developer tooling. Focus on AI systems, open-source infrastructure, and scalable enterprise platforms. Born in France, married to Priyanka, founder at [nubrain](https://nubrain.io) and often found traveling the world, sailing, or flying, together.
+San Francisco based and 3× founder, currently Co-founder & CTO at [Restack](https://restack.io). Coding since 1997, building high-performance infrastructure, distributed systems, and developer tooling. Focus on AI systems, open-source infrastructure, and enterprise platforms that scale. Born in France, married to Priyanka, founder at [nubrain](https://nubrain.io) and often found traveling the world, sailing, or flying, together.
 
 ---
 

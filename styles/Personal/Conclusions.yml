@@ -1,0 +1,11 @@
+# Personal voice: formulaic conclusion markers
+extends: existence
+message: "Formulaic conclusion: '%s' — consider cutting or rephrasing."
+level: warning
+tokens:
+  - 'in conclusion,'
+  - 'to conclude,'
+  - 'in summary,'
+  - 'to summarize,'
+  - 'to sum up,'
+  - 'ultimately,'

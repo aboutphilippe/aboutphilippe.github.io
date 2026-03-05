@@ -1,0 +1,7 @@
+# Personal voice: cap sentence length — long sentences are harder to read and feel less natural
+extends: occurrence
+message: "Sentence is long (%s+ words). Consider splitting or tightening (aim for under 35 words)."
+level: suggestion
+scope: sentence
+max: 34
+token: ' '

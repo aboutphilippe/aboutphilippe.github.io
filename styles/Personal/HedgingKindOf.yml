@@ -1,0 +1,8 @@
+# Personal voice: "kind of" / "sort of" — hedge less, say what you mean
+extends: existence
+message: "Hedging: '%s' — consider cutting or being more specific."
+level: warning
+ignorecase: true
+tokens:
+  - kind of
+  - sort of

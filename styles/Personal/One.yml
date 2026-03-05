@@ -1,0 +1,6 @@
+# Personal voice: avoid "one" as pronoun — use "you" or "we"
+extends: existence
+message: "Prefer 'you' or 'we' instead of 'one' here (personal POV)."
+level: warning
+raw:
+  - '\bone\s+(can|could|might|should|would|has|have|gets|may)\b'

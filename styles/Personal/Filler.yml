@@ -1,0 +1,36 @@
+# Personal voice: no filler words — keep it direct
+extends: existence
+message: "Filler word: consider cutting '%s'."
+level: warning
+ignorecase: true
+tokens:
+  - really
+  - just
+  - actually
+  - basically
+  - literally
+  - simply
+  - clearly
+  - obviously
+  - indeed
+  - somewhat
+  - rather
+  - quite
+  - fairly
+  - highly
+  - deeply
+  - truly
+  - absolutely
+  - definitely
+  - certainly
+  - hopefully
+  - unfortunately
+  - leverage
+  - utilize
+  - robust
+  - seamlessly
+  - game-changer
+  - cutting-edge
+  - best-in-class
+  - synergy
+  - paradigm

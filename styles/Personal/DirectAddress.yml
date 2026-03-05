@@ -1,0 +1,7 @@
+# Personal voice: encourage breaking the fourth wall — address the reader (you/we)
+extends: occurrence
+message: "Consider addressing the reader (e.g. 'you' or 'we') — break the fourth wall. Found %s; suggest at least 2."
+level: suggestion
+scope: text
+min: 2
+token: '\b(you|we|your|our)\b'
