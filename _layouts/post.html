@@ -29,7 +29,7 @@ layout: default
       .forEach(function (block) {
         var pre = block.closest("pre");
         var div = document.createElement("div");
-        div.className = "mermaid" + (block.textContent.indexOf("xychart") !== -1 ? " mermaid-xychart" : "");
+        div.className = "mermaid";
         div.textContent = block.textContent;
         div.setAttribute("data-mermaid-source", block.textContent);
         pre.parentNode.replaceChild(div, pre);
@@ -106,13 +106,14 @@ layout: default
       if (h.tagName === "H2") {
         ul.appendChild(li);
       } else {
-        var parentUl = ul.querySelector("li:last-child");
-        if (!parentUl) ul.appendChild(li);
+        var topLevelLis = ul.querySelectorAll(":scope > li");
+        var parentLi = topLevelLis.length ? topLevelLis[topLevelLis.length - 1] : null;
+        if (!parentLi) ul.appendChild(li);
         else {
-          var nested = parentUl.querySelector("ul");
+          var nested = parentLi.querySelector(":scope > ul");
           if (!nested) {
             nested = document.createElement("ul");
-            parentUl.appendChild(nested);
+            parentLi.appendChild(nested);
           }
           nested.appendChild(li);
         }
