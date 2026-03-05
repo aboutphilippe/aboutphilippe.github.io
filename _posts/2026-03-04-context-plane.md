@@ -36,17 +36,40 @@ The agent then uses that context to identify the list of customers to reach out 
 
 This architecture works for demos but breaks at scale.
 
-| Metric                           | p50       | p99      | Note                                                                                              | Improvement |
-| -------------------------------- | --------- | -------- | ------------------------------------------------------------------------------------------------- | ----------- |
-| **Context latency**              | ~3-8 h    | timeouts | 10k × (1-3 s per customer). Serial or limited parallelism; one slow dep blocks.                   | n/a         |
-| **Reliability**                  | 100%      | &lt;90%  | 10k runs; 1 of N APIs fails per customer → many failures. Joint success drops fast.               | n/a         |
-| **Tokens (total)**               | 500M      | 2 B+     | 10k × 50k-200k. Raw data from CRM, tickets, logs, emails.                                         | n/a         |
-| **Rate limits**                  | throttled | blocked  | 10k × 4 = 40k upstream API calls. Human-tier limits → you hit them.                               | n/a         |
-| **Cost (input + output, total)** | ~$930     | ~$3,600  | Input: 500M-2 B tokens @ $1.75/1M. Output: small (list/details of ~5% worth contacting) @ $14/1M. | n/a         |
+| Metric              | p50       | p99      | Note                                                                                              |
+| ------------------- | --------- | -------- | ------------------------------------------------------------------------------------------------- |
+| **Context latency** | ~3-8 h    | timeouts | 10k × (1-3 s per customer). Limited parallelism; one slow dep blocks.                             |
+| **Reliability**     | 100%      | &lt;90%  | 10k runs; 1 of N APIs fails per customer → many failures. Joint success drops fast.               |
+| **Tokens**          | 500M      | 2 B+     | 10k × 50k-200k. Raw data from CRM, tickets, logs, emails.                                         |
+| **Rate limits**     | throttled | blocked  | 10k × 4 = 40k upstream API calls. Human-tier limits → you hit them.                               |
+| **Cost**            | ~$930     | ~$3,600  | Input: 500M-2 B tokens @ $1.75/1M. Output: small (list/details of ~5% worth contacting) @ $14/1M. |
 
-This architecture proves unreliable and expensive ($1k-4k every time you run this agent question).
+This architecture proves unreliable and expensive: $1k-4k every time you run this agent question.
 
-That calls for a different architecture: treat context as **derived state**, not something assembled on every request. The infrastructure that provides it: the **Context Plane**.
+A skeptic might say nobody runs 10k × 4 API calls in a loop.
+
+I've seen first-hand implementations like this for internal tools patched together with low-code / no-code / vibe-code tools.
+
+Apart from these yolo implementations, engineering teams already use caches, warehouses, or vector DBs.
+
+---
+
+## Current approaches
+
+How do engineering teams solve context for AI agents today? I made a quick map of the landscape inspired by [turbopuffer’s take on search engines and the five common databases](https://turbopuffer.com/blog/turbopuffer)):
+
+| Approach                      | What engineers do                                                       | Latency                              | Cost                              | Limitation                                          |
+| ----------------------------- | ----------------------------------------------------------------------- | ------------------------------------ | --------------------------------- | --------------------------------------------------- |
+| **Runtime assembly**          | Per-request fetch from sources (× N entities).                          | p50 3-8 h; timeouts                  | ~$1k-4k per run                   | Scale, reliability, token bloat.                    |
+| **Ad-hoc caching**            | Cache each source; assemble at request time.                            | N reads + assembly                   | Cache + per-request assembly      | No “context for E” contract; invalidation drift.    |
+| **Data warehouse**            | ETL to warehouse; query “everything for X” at request time.             | Seconds per query                    | Per-query cost                    | Sec-level latency; no vector layer; still assemble. |
+| **Vector DB / search**        | Ingest; vector or hybrid search at request time; feed results to agent. | Sub-second when warm                 | Often memory-bound, high at scale | “Search corpus” ≠ “context per entity.”             |
+| **turbopuffer (and similar)** | Object-store + cache; cold/warm; namespace per tenant.                  | Warm &lt;100 ms; cold hundreds of ms | Object storage + cache; lower $   | Search primitive; layer context on top.             |
+| **Custom context service**    | In-house merge sources; serve “context for X.”                          | Depends on design                    | Ownership and ops cost            | One-off; ingest/index/cache ops burden.             |
+
+So I would see a better approach to make entity-id timeline a **first-class primitive**. Backed by object storage, derived state, one API and caching designed for it.
+
+Same way a search engine works for “search this namespace,” the context plane works for “give me the context for this entity.”
 
 ---
 
@@ -192,7 +215,7 @@ I've built and benchmarked a prototype in this direction (**Rust** for ingest, i
 
 ---
 
-## Benchmarks (early 2026)
+## Benchmarks
 
 All from a single machine, same benchmark harness.
 
