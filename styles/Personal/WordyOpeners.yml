@@ -1,0 +1,18 @@
+# Personal voice: avoid AI/corporate openers — be direct
+extends: existence
+message: "Cut or rephrase '%s' — be direct."
+level: warning
+ignorecase: true
+tokens:
+  - it is worth noting
+  - it's worth noting
+  - it should be noted
+  - it is important to
+  - when it comes to
+  - at the end of the day
+  - it goes without saying
+  - the fact that
+  - in order to
+  - as a result of the fact that
+  - due to the fact that
+  - in light of the fact that

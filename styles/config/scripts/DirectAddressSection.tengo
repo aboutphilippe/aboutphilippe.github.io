@@ -1,0 +1,55 @@
+// Personal: at least 1 you/we per section (text between two headings). Front matter stripped.
+text := import("text")
+matches := []
+
+// Strip YAML front matter (---\n...\n---)
+body := scope
+body_start := 0
+if text.has_prefix(text.trim_space(scope), "---") {
+  rest := scope[4:]
+  idx := text.index(rest, "\n---")
+  if idx >= 0 {
+    body = rest[idx + 4:]
+    body_start = len(scope) - len(body)
+  }
+}
+
+// Split into sections: text between two headings (lines starting with #)
+prev_start := 0
+pos := 0
+for line in text.split(body, "\n") {
+  if text.has_prefix(text.trim_space(line), "#") {
+    section := body[prev_start:pos]
+    // Skip first section (often front matter + intro) and any block that looks like front matter
+    if len(text.trim_space(section)) > 0 && prev_start > 0 && text.index(section, "layout:") < 0 {
+      lower := text.re_replace("'", " ", text.re_replace("\r", " ", text.to_lower(section)))
+      padded := " " + text.re_replace("[^a-z0-9 \\t]", " ", lower) + " "
+      count := 0
+      if text.index(padded, " you ") >= 0 { count = count + 1 }
+      if text.index(padded, " we ") >= 0 { count = count + 1 }
+      if text.index(padded, " your ") >= 0 { count = count + 1 }
+      if text.index(padded, " our ") >= 0 { count = count + 1 }
+      if count < 1 {
+        matches = append(matches, {begin: body_start + prev_start, end: body_start + prev_start + 1})
+      }
+    }
+    prev_start = pos
+  }
+  pos = pos + len(line) + 1
+}
+// Last section (skip if it looks like front matter)
+if prev_start < len(body) {
+  section := body[prev_start:]
+  if len(text.trim_space(section)) > 0 && text.index(section, "layout:") < 0 {
+    lower := text.re_replace("'", " ", text.re_replace("\r", " ", text.to_lower(section)))
+    padded := " " + text.re_replace("[^a-z0-9 \\t]", " ", lower) + " "
+    count := 0
+    if text.index(padded, " you ") >= 0 { count = count + 1 }
+    if text.index(padded, " we ") >= 0 { count = count + 1 }
+    if text.index(padded, " your ") >= 0 { count = count + 1 }
+    if text.index(padded, " our ") >= 0 { count = count + 1 }
+    if count < 1 {
+      matches = append(matches, {begin: body_start + prev_start, end: body_start + prev_start + 1})
+    }
+  }
+}

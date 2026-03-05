@@ -1,0 +1,6 @@
+# Personal voice: at least 1 question (rhetorical or not) per section (text between two headings). Script excludes front matter.
+extends: script
+message: "Consider adding a rhetorical question or a direct question in this section."
+level: suggestion
+scope: raw
+script: RhetoricalQuestionSection.tengo

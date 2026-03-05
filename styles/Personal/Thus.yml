@@ -1,0 +1,7 @@
+# Personal voice: avoid "thus" (prefer "so" or rephrase)
+extends: existence
+message: "Prefer 'so' or rephrase instead of '%s'."
+level: warning
+ignorecase: true
+tokens:
+  - thus

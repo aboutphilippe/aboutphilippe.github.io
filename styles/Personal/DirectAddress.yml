@@ -1,0 +1,6 @@
+# Personal voice: at least 1 you/we per section (text between two headings). Script excludes front matter.
+extends: script
+message: "Consider addressing the reader (e.g. 'you' or 'we') in this section — break the fourth wall."
+level: suggestion
+scope: raw
+script: DirectAddressSection.tengo

@@ -1,0 +1,12 @@
+# Personal voice: overused phrases that sound like filler
+extends: existence
+message: "Cliché or filler: '%s' — cut or rephrase."
+level: suggestion
+ignorecase: true
+tokens:
+  - let's dive in
+  - dive deeper
+  - as i mentioned
+  - as stated above
+  - note that
+  - it goes without saying
