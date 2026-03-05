@@ -1,7 +1,6 @@
-# Personal voice: encourage breaking the fourth wall — address the reader (you/we)
-extends: occurrence
-message: "Consider addressing the reader (e.g. 'you' or 'we') — break the fourth wall. Found %s; suggest at least 2."
+# Personal voice: at least 1 you/we per section (text between two headings). Script excludes front matter.
+extends: script
+message: "Consider addressing the reader (e.g. 'you' or 'we') in this section — break the fourth wall."
 level: suggestion
-scope: text
-min: 2
-token: '\b(you|we|your|our)\b'
+scope: raw
+script: DirectAddressSection.tengo

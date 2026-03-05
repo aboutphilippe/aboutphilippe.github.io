@@ -20,6 +20,9 @@ Thumbs.db
 styles/*
 !styles/Personal/
 !styles/Personal/**
+!styles/config/
+!styles/config/scripts/
+!styles/config/scripts/**
 
 # IDE
 .idea/

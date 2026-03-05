@@ -1,0 +1,27 @@
+---
+layout: null
+permalink: /sitemap.xml
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{{ site.url }}/</loc>
+    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
+  </url>
+  {% for post in site.posts %}
+  <url>
+    <loc>{{ site.url }}{{ post.url }}</loc>
+    <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
+  </url>
+  {% endfor %}
+  {% for page in site.pages %}
+  {% if page.layout and page.url != '/' and page.url != '/sitemap.xml' and page.url != '/feed.xml' and page.url != '/robots.txt' %}
+  {% unless page.url contains '/styles/' %}
+  <url>
+    <loc>{{ site.url }}{{ page.url }}</loc>
+    {% if page.date %}<lastmod>{{ page.date | date_to_xmlschema }}</lastmod>{% endif %}
+  </url>
+  {% endunless %}
+  {% endif %}
+  {% endfor %}
+</urlset>

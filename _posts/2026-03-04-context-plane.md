@@ -1,15 +1,16 @@
 ---
 layout: post
 title: "Context Plane: A Point of View"
+description: "Why does this matter to you? My perspective on context plane for AI agents and the architecture I believe in."
 ---
 
-Motivation: I introduce my perspective on context plane for AI agents, sketch an architecture I believe in, and share early findings and benchmarks. Why does this matter to you? Read on.
+Motivation: I introduce my perspective on context plane for AI agents, sketch an architecture I believe in, and share early findings and benchmarks.
 
 ---
 
 ## Why I care about context plane
 
-AI agents need context. Not "more tokens" but **the right context**, for the right entity, at the right time. Today teams often solve that by stuffing prompts, calling five APIs, or maintaining a separate "context service" that nobody wants to own. What about a cleaner primitive? A **context plane** (infrastructure that builds, stores, and serves context so agents can query it with one mental model and one API). Before defining it, it helps to see why the current approach breaks.
+AI agents need context. Not "more tokens" but **the right context**, for the right entity, at the right time. Today teams often solve that by stuffing prompts, calling five APIs, or maintaining a separate "context service" that nobody wants to own. What about a cleaner primitive? A **context plane** (infrastructure that builds, stores, and serves context so agents can query it with one mental model and one API). Before we define it, it helps to see why the current approach breaks.
 
 ---
 

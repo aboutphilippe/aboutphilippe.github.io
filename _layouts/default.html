@@ -45,9 +45,9 @@
     />
     <meta property="og:site_name" content="{{ site.title }}" />
     {% assign og_image = page.image | default: site.og_image | default:
-    '/assets/og.png' %} {% if og_image contains 'http' %}{% assign og_image_url
-    = og_image %}{% elsif site.url %}{% assign og_image_url = site.url | append:
-    og_image %}{% endif %} {% if og_image_url %}
+    '/assets/og.png' %} {% if og_image contains 'http' %} {% assign og_image_url
+    = og_image %} {% elsif site.url %} {% assign og_image_url = site.url |
+    append: og_image %} {% endif %} {% if og_image_url %}
     <meta property="og:image" content="{{ og_image_url }}" />
     <meta name="twitter:image" content="{{ og_image_url }}" />
     {% endif %} {% if page.layout == 'post' and page.date %}
@@ -67,11 +67,24 @@
     />
     {% if page.layout == 'post' %}
     <script type="application/ld+json">
-      {"@context":"https://schema.org","@type":"BlogPosting","headline":"{{ page.title | escape }}","datePublished":"{{ page.date | date_to_xmlschema }}","author":{"@type":"Person","name":"{{ site.author | default: site.title }}"{% if site.url %},"publisher":{"@type":"Organization","name":"{{ site.title }}"}{% endif %}}
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "{{ page.title | escape }}",
+        "datePublished": "{{ page.date | date_to_xmlschema }}",
+        "author": { "@type": "Person", "name": "{{ site.author | default: site.title }}" }
+        {% if site.url %},"publisher": { "@type": "Organization", "name": "{{ site.title }}" }{% endif %}
+      }
     </script>
     {% elsif page.url == '/' or page.url == '' %}
     <script type="application/ld+json">
-      {"@context":"https://schema.org","@type":"Person","name":"{{ site.author | default: site.title | escape }}","description":"{{ site.description | replace: '"', '\"' }}"{% if site.url %},"url":"{{ site.url }}"{% endif %}}
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "{{ site.author | default: site.title | escape }}",
+        "description": "{{ site.description | replace: '"', '\"' }}"
+        {% if site.url %},"url": "{{ site.url }}"{% endif %}
+      }
     </script>
     {% endif %}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -122,12 +135,12 @@
       body {
         font-family: "JetBrains Mono", ui-monospace, monospace;
         font-size: 1rem;
-        line-height: 1.7;
+        line-height: 1.75;
         color: var(--text);
         background: var(--bg);
         margin: 0;
         padding: 2rem 1rem;
-        max-width: 48rem;
+        max-width: min(48rem, 78ch);
         margin-left: auto;
         margin-right: auto;
         text-rendering: optimizeLegibility;
@@ -214,12 +227,19 @@
         color: var(--link);
         text-decoration: underline;
       }
+      article h2[id],
+      article h3[id] {
+        scroll-margin-top: 1rem;
+      }
+      #post-top {
+        scroll-margin-top: 1rem;
+      }
       p {
-        margin: 0 0 1rem;
+        margin: 0 0 1.25rem;
       }
       ul,
       ol {
-        margin: 0 0 1rem;
+        margin: 0 0 1.25rem;
         padding-left: 1.5rem;
       }
       hr {
@@ -286,6 +306,19 @@
           font-size: 0.85rem;
           line-height: 1.5;
         }
+        .toc-sidebar .toc-label {
+          display: none;
+          font-weight: 600;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          color: var(--muted);
+          margin: 0 0 0.5rem;
+          padding: 0;
+        }
+        .toc-sidebar.toc-has-items .toc-label {
+          display: block;
+        }
         .toc-nav {
           padding: 0.5rem 0;
           border-left: 0px solid var(--border);
@@ -300,12 +333,16 @@
           margin: 0.25rem 0;
         }
         .toc-nav a {
-          color: var(--muted);
-          text-decoration: none;
+          color: var(--link);
+          text-decoration: underline;
+          text-underline-offset: 0.15em;
         }
         .toc-nav a:hover,
         .toc-nav a.is-active {
           color: var(--link);
+        }
+        .toc-nav a.is-active {
+          font-weight: 600;
         }
         .toc-nav .toc-h3 {
           padding-left: 0.75rem;
@@ -318,6 +355,16 @@
           border-left: 1px solid var(--border);
           margin-left: 0.25rem;
         }
+      }
+      .back-to-top {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+      }
+      .back-to-top a {
+        color: var(--muted);
+      }
+      .back-to-top a:hover {
+        color: var(--link);
       }
     </style>
   </head>
@@ -378,6 +425,9 @@
               : "dark";
           document.documentElement.setAttribute("data-theme", next);
           localStorage.setItem("theme", next);
+          window.dispatchEvent(
+            new CustomEvent("themechange", { detail: { theme: next } }),
+          );
         });
       })();
     </script>

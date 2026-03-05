@@ -4,29 +4,71 @@ layout: default
 
 <div class="post-with-toc">
   <aside id="toc-sidebar" class="toc-sidebar" aria-label="Table of contents">
-    <nav class="toc-nav"></nav>
+    <nav class="toc-nav" aria-label="On this page">
+      <p class="toc-label" id="toc-label">On this page</p>
+    </nav>
   </aside>
   <div class="post-content">
     <article id="post-top">
       <h1>{{ page.title }}</h1>
       <p class="muted">{{ page.date | date: "%B %d, %Y" }}</p>
       {{ content }}
+      <p class="back-to-top"><a href="#post-top">Back to top</a></p>
     </article>
     <p class="muted"><a href="{{ '/' | relative_url }}">← Back</a></p>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" crossorigin="anonymous"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
+  crossorigin="anonymous"
+></script>
 <script>
   (function () {
-    document.querySelectorAll("pre code.language-mermaid").forEach(function (block) {
-      var pre = block.closest("pre");
-      var div = document.createElement("div");
-      div.className = "mermaid";
-      div.textContent = block.textContent;
-      pre.parentNode.replaceChild(div, pre);
+    document
+      .querySelectorAll("pre code.language-mermaid")
+      .forEach(function (block) {
+        var pre = block.closest("pre");
+        var div = document.createElement("div");
+        div.className = "mermaid";
+        div.textContent = block.textContent;
+        div.setAttribute("data-mermaid-source", block.textContent);
+        pre.parentNode.replaceChild(div, pre);
+      });
+    function getMermaidTheme() {
+      var theme =
+        document.documentElement.getAttribute("data-theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light");
+      return theme === "dark" ? "dark" : "neutral";
+    }
+    function runMermaid() {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: getMermaidTheme(),
+      });
+      mermaid.run({ querySelector: ".mermaid", suppressErrors: true });
+    }
+    runMermaid();
+    window.addEventListener("themechange", function () {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: getMermaidTheme(),
+      });
+      var nodes = document.querySelectorAll(".mermaid");
+      nodes.forEach(function (div, i) {
+        var src = div.getAttribute("data-mermaid-source");
+        if (!src) return;
+        var id = "mermaid-theme-" + i + "-" + Date.now();
+        mermaid
+          .render(id, src.trim())
+          .then(function (result) {
+            div.innerHTML = result.svg;
+            if (result.bindFunctions) result.bindFunctions(div);
+          })
+          .catch(function () {});
+      });
     });
-    mermaid.initialize({ startOnLoad: false, theme: "neutral" });
-    mermaid.run({ querySelector: ".mermaid", suppressErrors: true });
   })();
 </script>
 <script>
@@ -43,7 +85,12 @@ layout: default
     ul.appendChild(titleLi);
     var headings = article.querySelectorAll("h2, h3");
     headings.forEach(function (h) {
-      var id = h.id || (h.textContent.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""));
+      var id =
+        h.id ||
+        h.textContent
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
       if (!h.id) h.id = id;
       var link = document.createElement("a");
       link.href = "#" + id;
@@ -74,18 +121,23 @@ layout: default
     nav.appendChild(ul);
     document.getElementById("toc-sidebar").classList.add("toc-has-items");
     var observed = [article];
-    headings.forEach(function (h) { observed.push(h); });
+    headings.forEach(function (h) {
+      observed.push(h);
+    });
     var observer = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
           var id = entry.target.id || "post-top";
           nav.querySelectorAll("a").forEach(function (a) {
-            a.classList.toggle("is-active", a.getAttribute("href") === "#" + id);
+            a.classList.toggle(
+              "is-active",
+              a.getAttribute("href") === "#" + id,
+            );
           });
         });
       },
-      { rootMargin: "-80px 0px -60% 0px", threshold: 0 }
+      { rootMargin: "-80px 0px -60% 0px", threshold: 0 },
     );
     observed.forEach(function (el) {
       observer.observe(el);
