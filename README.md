@@ -41,3 +41,9 @@ vale _posts/ index.md README.md
 - Toggle rules in `.vale.ini`. See [Vale docs](https://vale.sh/docs/).
 
 CI runs `vale sync` then Vale on `_posts/`, `index.md`, and `README.md` when Markdown or Vale config changes.
+
+## Performance (Lighthouse)
+
+- **Compression:** Local `jekyll serve` does not gzip responses, so Lighthouse may report “no compression” and ~25 KiB savings on `http://127.0.0.1:4000`. In production (e.g. GitHub Pages), HTML and text assets are served with gzip when the client sends `Accept-Encoding: gzip`.
+- **Layout shift (CLS):** The main font (JetBrains Mono) is preloaded so the first paragraph is less likely to shift when the font loads. If Google Fonts updates the font, the preload URL in `_layouts/default.html` may need updating.
+- **Security headers:** Best-practice headers (CSP, HSTS, COOP, X-Frame-Options) are not set by this repo; on GitHub Pages you cannot set custom HTTP response headers. To use them, you’d need a proxy or another host that adds those headers.

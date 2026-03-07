@@ -6,3 +6,6 @@ theme: minima
 markdown: kramdown
 permalink: /:year/:month/:day/:title/
 og_image: /assets/og.png
+
+# Include list
+include: [llms.txt]

@@ -18,61 +18,71 @@ layout: default
     <p class="muted"><a href="{{ '/' | relative_url }}">← Back</a></p>
   </div>
 </div>
-<script
-  src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
-  crossorigin="anonymous"
-></script>
+{% if content contains 'language-mermaid' %}
 <script>
   (function () {
-    document
-      .querySelectorAll("pre code.language-mermaid")
-      .forEach(function (block) {
-        var pre = block.closest("pre");
-        var div = document.createElement("div");
-        div.className = "mermaid";
-        div.textContent = block.textContent;
-        div.setAttribute("data-mermaid-source", block.textContent);
-        pre.parentNode.replaceChild(div, pre);
-      });
+    var blocks = document.querySelectorAll("pre code.language-mermaid");
+    if (!blocks.length) return;
+    blocks.forEach(function (block) {
+      var pre = block.closest("pre");
+      var div = document.createElement("div");
+      div.className = "mermaid";
+      div.setAttribute("data-mermaid-source", block.textContent);
+      div.setAttribute("aria-hidden", "true");
+      pre.parentNode.replaceChild(div, pre);
+    });
     function getMermaidTheme() {
-      var theme =
-        document.documentElement.getAttribute("data-theme") ||
-        (window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light");
+      var theme = document.documentElement.getAttribute("data-theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
       return theme === "dark" ? "dark" : "neutral";
     }
-    function runMermaid() {
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: getMermaidTheme(),
-      });
-      mermaid.run({ querySelector: ".mermaid", suppressErrors: true });
+    function loadAndRunMermaid() {
+      if (window.__mermaidLoaded) return;
+      window.__mermaidLoaded = true;
+      var s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js";
+      s.crossOrigin = "anonymous";
+      s.onload = function () {
+        mermaid.initialize({ startOnLoad: false, theme: getMermaidTheme() });
+        document.querySelectorAll(".mermaid").forEach(function (div) {
+          div.textContent = div.getAttribute("data-mermaid-source");
+        });
+        mermaid.run({ querySelector: ".mermaid", suppressErrors: true });
+        window.addEventListener("themechange", function () {
+          mermaid.initialize({ startOnLoad: false, theme: getMermaidTheme() });
+          document.querySelectorAll(".mermaid").forEach(function (div, i) {
+            var src = div.getAttribute("data-mermaid-source");
+            if (!src) return;
+            var id = "mermaid-theme-" + i + "-" + Date.now();
+            mermaid.render(id, src.trim()).then(function (result) {
+              div.innerHTML = result.svg;
+              if (result.bindFunctions) result.bindFunctions(div);
+            }).catch(function () {});
+          });
+        });
+      };
+      document.body.appendChild(s);
     }
-    runMermaid();
-    window.addEventListener("themechange", function () {
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: getMermaidTheme(),
-      });
-      var nodes = document.querySelectorAll(".mermaid");
-      nodes.forEach(function (div, i) {
-        var src = div.getAttribute("data-mermaid-source");
-        if (!src) return;
-        var id = "mermaid-theme-" + i + "-" + Date.now();
-        mermaid
-          .render(id, src.trim())
-          .then(function (result) {
-            div.innerHTML = result.svg;
-            if (result.bindFunctions) result.bindFunctions(div);
-          })
-          .catch(function () {});
-      });
-    });
+    var observer = new IntersectionObserver(
+      function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) {
+            var run = function () { loadAndRunMermaid(); };
+            if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 2500 });
+            else setTimeout(run, 2500);
+            return;
+          }
+        }
+      },
+      { rootMargin: "200px", threshold: 0 }
+    );
+    document.querySelectorAll(".mermaid").forEach(function (el) { observer.observe(el); });
   })();
 </script>
+{% endif %}
 <script>
   (function () {
+    function runToc() {
     var article = document.querySelector(".post-content article");
     var nav = document.querySelector(".toc-nav");
     if (!article || !nav) return;
@@ -94,7 +104,6 @@ layout: default
       if (!h.id) h.id = id;
       var link = document.createElement("a");
       link.href = "#" + id;
-      link.setAttribute("aria-label", "Link to this section");
       while (h.firstChild) link.appendChild(h.firstChild);
       h.appendChild(link);
       var li = document.createElement("li");
@@ -161,5 +170,8 @@ layout: default
     observed.forEach(function (el) {
       observer.observe(el);
     });
+    }
+    if (window.requestIdleCallback) requestIdleCallback(runToc, { timeout: 2000 });
+    else setTimeout(runToc, 0);
   })();
 </script>
