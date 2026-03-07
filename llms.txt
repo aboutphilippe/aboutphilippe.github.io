@@ -1,0 +1,14 @@
+---
+layout: null
+---
+
+# LLM Feed for aboutphilippe.com
+_Generated: {{ site.time | date_to_rfc822 }}_
+
+{{ site.description }}
+
+## All posts
+The links below take you to the raw Markdown content.
+
+{% for post in site.posts %}- [{{ post.title }}](https://raw.githubusercontent.com/aboutphilippe/aboutphilippe.github.io/refs/heads/main/{{ post.path }})
+{% endfor %}
