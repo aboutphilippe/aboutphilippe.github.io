@@ -31,3 +31,5 @@ styles/*
 *~
 
 .sass-cache
+
+.env
