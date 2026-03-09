@@ -591,7 +591,12 @@
               }),
               (e.__SV = 1));
           })(document, window.posthog || []);
-          posthog.init(phKey, { api_host: phHost, defaults: "2026-01-30" });
+          posthog.init(phKey, {
+            api_host: phHost,
+            ui_host: "https://us.posthog.com",
+            defaults: "2026-01-30",
+            person_profiles: "identified_only",
+          });
         }
         if ("requestIdleCallback" in window)
           requestIdleCallback(initPostHog, { timeout: 3500 });
