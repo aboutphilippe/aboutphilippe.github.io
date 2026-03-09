@@ -9,3 +9,7 @@ og_image: /assets/og.png
 
 # Include list
 include: [llms.txt]
+
+posthog:
+  api_key: "phc_T9KlL0KEXo2JOUNNcR4q2WkvtbBwUgQTgLdBuJzg3dG"
+  api_host: "https://us.i.posthog.com"
