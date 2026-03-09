@@ -12,4 +12,4 @@ include: [llms.txt]
 
 posthog:
   api_key: "phc_T9KlL0KEXo2JOUNNcR4q2WkvtbBwUgQTgLdBuJzg3dG"
-  api_host: "https://us.i.posthog.com"
+  api_host: "https://t.aboutphilippe.com"
