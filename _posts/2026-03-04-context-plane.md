@@ -4,13 +4,13 @@ title: "Context Plane: A Point of View"
 description: "Why does this matter to you? My perspective on context plane for AI agents and the architecture I believe in."
 ---
 
-Motivation: I introduce my perspective on context plane for AI agents, sketch an architecture I believe in, and share early findings and benchmarks.
+Motivation: I introduce my perspective on context plane for AI agents. Along the way I sketch an architecture I believe in and share early findings and benchmarks.
 
 ---
 
 ## Why I care about context plane
 
-AI agents need context. Not "more tokens" but **the right context**, for the right entity, at the right time. Today teams often solve that by stuffing prompts, calling five APIs, or maintaining a separate "context service" that nobody wants to own. What about a cleaner primitive? A **context plane** (infrastructure that builds, stores, and serves context so agents can query it with one mental model and one API). Before we define it, it helps to see why the current approach breaks.
+AI agents need context. Not "more tokens" but **the right context**, for the right entity, at the right time. Today teams often solve that by stuffing prompts and calling five APIs, or by maintaining a separate "context service" that nobody wants to own. What about a cleaner primitive? A **context plane** (infrastructure that builds, stores, and serves context so agents can query it with one mental model and one API). Before we define it, it helps to see why the current approach breaks.
 
 ---
 
@@ -101,7 +101,7 @@ Same metrics, with the estimates below when using a context plane:
 
 The agent no longer pays for N round-trips and token bloat on every request.
 
-**Disclaimer: cost of ingest and indexing.** Building and maintaining the context store carries a cost. Ingesting and indexing data into it consume compute, storage, and operational overhead. That cost drives the choice of architecture below: **Rust** serverless for ingest and query, with a **cache layer** backed by **S3-compatible blob storage** as the durable store. You keep ingest and indexing lean, scale with usage, and only pay for what you cache hot.
+**Disclaimer: cost of ingest and indexing.** Building and maintaining the context store carries a cost. Ingesting and indexing data into it consume compute, storage, and operational overhead. That cost drives the choice of architecture below: **Rust** serverless for ingest and query, with a **cache layer** backed by **S3-compatible blob storage** as the durable store. You keep ingest and indexing lean. Then you scale with usage and only pay for what you cache hot.
 
 The Context Plane **infrastructure** stores and serves context for AI systems. It has two core components (**Context Cache** and **Context Store**). How data gets into the store (pipelines, ETL, or an ingest API) falls to engineering or data teams and their preferred tools.
 
@@ -132,7 +132,7 @@ I want the system to stay **object-storage-first** and **stateless at the query 
 
 - **Storage:** **S3-compatible object storage** (e.g. AWS S3, RustFS, Cloudflare R2, or local) acts as the system of record. No primary database. Ingest writes immutable segments (JSONL + zstd) per entity per day; an indexer builds BM25 and vector (HNSW) shards per tenant per day and writes them back. Lifecycle policies, multi-tenant paths, and compliance stay simple and auditable.
 
-- **Compute (Rust, serverless):** Ingest, indexer, and query nodes run in **Rust** so they can run as **serverless** workloads that scale: stateless, low cold start, scale-to-zero or scale-out on demand. Query nodes load shards and segments from object storage into memory or local cache on demand; you can restart, scale out, or rebuild from storage at any time. No coordination for "which node has which shard" (cache fill and eviction).
+- **Compute (Rust, serverless):** Ingest, indexer, and query nodes run in **Rust** so they can run as **serverless** workloads that scale: stateless, low cold start, scale-to-zero or scale-out on demand. Query nodes load shards and segments from object storage into memory or local cache on demand. You can restart or scale out at any time, or rebuild from storage if needed. No coordination for "which node has which shard" (cache fill and eviction).
 
 - **Cold/warm economics:** Only a subset of entities stay hot at any moment. Hot entities get fast, cached retrieval; cold ones remain queryable from S3-compatible storage with higher latency. Cost scales with how much you cache, not with "index everything in RAM."
 
@@ -199,7 +199,7 @@ Cheap append-only writes, lifecycle-friendly for S3, and easy to reason about fo
 
 ## Intended audience
 
-A good reference use case amounts to what Vercel's GTM team did with their corpus ([turbopuffer Vercel case study](https://turbopuffer.com/customers/vercel)). Gong, Slack, Salesforce per Salesforce account, so AI lead agents can search an account's full history at runtime. One index per account, hybrid (BM25 + vector) search, agents with a search tool. Context plane targets that same shape: **entity = account/user/lead**, **namespace per entity**, **hybrid search**, **cold/warm economics**. Internal tools, GTM, support, and product (anywhere "give me the best context for this entity" remains the question).
+A good reference use case amounts to what Vercel's GTM team did with their corpus ([turbopuffer Vercel case study](https://turbopuffer.com/customers/vercel)). Gong, Slack, and Salesforce data sit per Salesforce account, so AI lead agents can search an account's full history at runtime. Each Salesforce account gets one index, with hybrid (BM25 + vector) search and agents calling a search tool on top. Context plane targets that same shape. The entity equals an account, user, or lead, with one namespace per entity, hybrid search on top, and cold/warm economics underneath. Internal tools, GTM, support, and product (anywhere "give me the best context for this entity" remains the question).
 
 ---
 
@@ -209,7 +209,7 @@ I've built and benchmarked a prototype in this direction (**Rust** for ingest, i
 
 **Warm path sits in good shape.** For vector-only and text-only queries at modest QPS, latency lands where I'd hope: single-digit to low tens of milliseconds (e.g. vector warm ~2.8 ms p50, text warm ~4.7 ms p50 at 10k docs, 40 QPS). Hybrid warm runs a bit higher but still reasonable (~27 ms p50). So the core "load shard, run BM25 + vector, merge" path works.
 
-**Cold and filter-heavy paths dominate the pain.** When shards sit uncached or when you add heavy filters (e.g. many entity IDs, time ranges), tail latency blows up (e.g. hybrid cold p99 in the tens of seconds in early runs. That marks the main gap vs. "napkin math": cache locality and filter evaluation cost. So the next bets include filter-first candidate reduction, better shard prefetch, and keeping hot loops SIMD-friendly (more below).
+**Cold and filter-heavy paths dominate the pain.** When shards sit uncached or when you add heavy filters (e.g. many entity IDs, time ranges), tail latency blows up (e.g. hybrid cold p99 in the tens of seconds in early runs. That marks the main gap vs. "napkin math": cache locality and filter evaluation cost. The next bets focus on filter-first candidate reduction and better shard prefetch. Keeping hot loops SIMD-friendly comes next (more below).
 
 **Zero-cost abstractions can still hide cost.** I've re-read work like [turbopuffer's post on zero-cost abstractions vs SIMD](https://turbopuffer.com/blog/zero-cost): iterators that return one element per `next()` can prevent the compiler from vectorizing. The fix uses batched iterators and tight loops over contiguous data. The codebase lacks an LSM-style merge iterator so far, but the lesson holds: **profile first**, then look at LLVM IR or flame graphs when the numbers don't match the model. Mechanical sympathy beats trusting the abstraction.
 
@@ -246,7 +246,7 @@ xychart
 | Hybrid cold  | Pain   | p99 in tens of seconds, cache/shard bottleneck |
 | Filter-heavy | Pain   | Tail latency, filter-first reduction needed    |
 
-So: **warm vector and text sit in a good place**. **Hybrid cold and filter-heavy workloads sit where the work lies**. No claim of parity with commercial search APIs. The goal remains to stay honest about the profile and improve from here: filter ordering, vector stage layout, shard prefetch, SIMD where it pays.
+So: **warm vector and text sit in a good place**. **Hybrid cold and filter-heavy workloads sit where the work lies**. No claim of parity with commercial search APIs. The goal remains to stay honest about the profile and improve from here on filter ordering, vector stage layout, shard prefetch, and SIMD where it pays.
 
 ---
 
@@ -258,7 +258,7 @@ So: **warm vector and text sit in a good place**. **Hybrid cold and filter-heavy
 
 ---
 
-## Wrapping up
+## So what?
 
 The Context Plane equals **context store + context cache**: infrastructure that stores and serves context so AI agents get the right context at the right time. It treats context as derived state instead of something assembled on every request, reducing latency, cost, and failure surface. The architecture I bet on (S3-compatible object storage as truth, Rust-based ingest/indexer/query nodes, immutable segments, daily shards, cold/warm caching) already shows solid warm-path performance and clear bottlenecks in cold and filter-heavy regimes. If you build agents that need deterministic, entity-scoped context, I would love to hear how you think about it.
 
