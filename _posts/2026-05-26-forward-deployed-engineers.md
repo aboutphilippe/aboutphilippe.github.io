@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Forward Deployed Engineers and Agent Data Plane"
-description: "Why the bottleneck of enterprise AI moved from generating code to running context in production, and what the Agent Data Plane needs to look like."
+title: "Forward Deployed Engineers and Agents"
+description: "Why the bottleneck of enterprise AI moved from generating code to running context in production, and what an Agent Data Plane looks like."
 ---
 
 Motivation: I share why Forward Deployed Engineers matter more than ever and the two problems I keep watching them solve on every engagement. Architecture and benchmarks come later in the post.
@@ -14,11 +14,11 @@ I spent years deploying open-source applications onto customer infrastructure. T
 
 Despite all that velocity, every AI-native company I talk to keeps **_hiring Forward Deployed Engineers as fast as recruiters can find them_**. That alone should tell us something.
 
-I've spent enough time wearing the FDE hat myself to keep seeing the same two problems on every engagement. They both pull in the same direction, and I think they explain why headcount keeps going up even as code generation gets cheaper.
+I've spent enough time wearing the FDE hat myself to keep seeing the same two problems on every engagement:
 
 ### Problem 1: evaluation alignment and handover
 
-Most agent deployments end up automating the work of an industry expert. What the agent does (triage a support ticket, qualify an insurance case, screen a legal document) lives inside what I keep calling operational expertise.
+Most agent deployments end up automating the work of an industry expert. What the agent does (triage a support ticket, qualify an insurance case, screen a legal document) lives inside what I keep calling **operational expertise**.
 
 An engineer can judge code quality and harden the reliability of a workflow. The engineer can't judge whether the agent's answer counts as clinically correct on a healthcare ticket or legally defensible on a contract. The industry expert can. So the FDE sits next to that expert and the two of them iterate together. That collaboration produces most of the actual product.
 
@@ -50,7 +50,11 @@ A recent [Fivetran and Redpoint survey of 400 enterprise data leaders](https://c
 
 The gap looks enormous, and the report reads unusually blunt about the cause. The bottleneck has nothing to do with model quality. It has everything to do with the data foundation underneath the agents.
 
-Yes, a data-tooling vendor calling data the bottleneck counts as zero shocking news. Fair point. But the same pattern shows up everywhere I've worked. The project of the week could turn into Kubernetes-native infrastructure one quarter and Temporal workflows the next. Sooner or later you also need durable agents on top of a context store. Neither the LLM nor the prompt nor the orchestration layer ever turned out to count as the hardest part. The hardest parts came down to reliable context and fresh operational data plus the lineage, governance, interoperability, evaluation, and handover that lets a customer trust either of them. In short, operational data infrastructure.
+Yes, a data-tooling vendor calling data the bottleneck counts as zero shocking news. Fair point. But the same pattern shows up everywhere I've worked.
+
+The project of the week could turn into Kubernetes-native infrastructure one quarter and agentic workflows the next. Sooner or later you also need durable agents on top of a context store. Neither the LLM nor the prompt nor the orchestration layer ever turned out to count as the hardest part.
+
+The hardest parts came down to reliable context and fresh operational data plus the lineage, governance, interoperability, evaluation, and handover that lets a customer trust either of them. In short, operational data infrastructure.
 
 The model has turned into a commodity. The plumbing around it hasn't.
 
@@ -58,9 +62,11 @@ The model has turned into a commodity. The plumbing around it hasn't.
 
 ## The wrong mental model
 
-The industry likes to describe FDEs as AI consultants, integration engineers, or "customer engineers." That framing misses the point and probably underprices the role.
+The industry calls FDEs AI consultants, integration engineers, and customer engineers. Each framing misses the point and probably underprices the role.
 
-In every serious deployment I've watched, the FDE ends up doing something closer to **operational alignment engineering**. They map workflows and operational semantics to the actual systems they touch. Then they wire up the pipelines and stand up the context store. Then they sit with domain experts long enough to translate vague KPIs into evaluation suites that survive the next prompt change. After that, they iterate on production behaviour week after week until trust shows up.
+In every serious deployment I've watched, the FDE ends up doing something closer to **operational alignment engineering**.
+
+They map workflows and operational semantics to the actual systems they touch. Then they wire up the pipelines and stand up the context store. Then they sit with domain experts long enough to translate vague KPIs into evaluation suites that survive the next prompt change. After that, they iterate on production behaviour week after week until trust shows up.
 
 The hard question stopped sounding like "how do we build an agent." Claude Code answers large parts of that already. The hard question turned into "how do we build a trustworthy operational context system for an agent." Different problem, different muscle.
 
@@ -72,11 +78,23 @@ The hard question stopped sounding like "how do we build an agent." Claude Code 
 
 The initial ask sounds disarmingly simple:
 
-> Build an AI agent to help our coordinators.
+`Build an AI agent to help our rehab coordinators.`
 
 The FDE accepts the engagement, and then reality shows up.
 
-A lot of things show up at once. Insurance qualification rules nobody wrote down. Escalation conditions that depend on the time of day. Reimbursement constraints that vary by region, audit requirements buried in a compliance binder, and acceptable confidence thresholds that the operations lead "knows when she sees them." None of which live in any single place a human or model can read. Then come the systems: Salesforce, two EMRs, a pile of PDFs, an email firehose, internal APIs, Slack, billing. And finally the questions nobody asked at the kickoff:
+A lot of things show up at once:
+
+- Insurance qualification rules nobody wrote down.
+- Escalation conditions that depend on the time of day.
+- Reimbursement constraints that vary by region.
+- Audit requirements buried in a compliance binder.
+- Acceptable confidence thresholds that the operations lead "knows when she sees them."
+
+None of which live in any single place a human or model can read.
+
+Then come the systems: Salesforce, two EMRs, a pile of PDFs, an email firehose, internal APIs, Slack, billing.
+
+And finally the questions nobody asked at the kickoff:
 
 - What defines a successful qualification?
 - When should the agent escalate?
@@ -84,7 +102,11 @@ A lot of things show up at once. Insurance qualification rules nobody wrote down
 - Which data source wins when two disagree?
 - How do we measure production performance after week one?
 
-None of those answers live in the model. None live in Kubernetes, APIs, or the orchestration layer. They live inside the operational expertise of the customer. The deployment only succeeds if the FDE's systems knowledge and the customer's operational knowledge stay continuously aligned. That alignment becomes the real product. The agent comes out as a side effect.
+None of those answers live in the model. None live in Kubernetes, APIs, or the orchestration layer. They live inside the operational expertise of the customer.
+
+The deployment only succeeds if the FDE's systems knowledge and the customer's operational knowledge stay continuously aligned.
+
+That alignment becomes the real product, The agent comes out as a side effect.
 
 ---
 
@@ -104,60 +126,32 @@ This pain turns acute around the 10 FDE mark and existential around 50 to 100. A
 
 I started caring about the problem at exactly that moment. Every company scaling FDEs accidentally builds the same product. They don't call it a product, though, and it doesn't ship to anyone outside the team.
 
----
+## Solution: an agent data plane
 
-## The data foundation problem
+I don't mean another orchestration tool or AI IDE or hosted copilot that the security team rejects in week three. I mean a deployable operational data foundation for autonomous systems.
 
-The same survey gives a useful breakdown of what enterprises consider the top barriers to AI adoption:
-
-| Barrier                               | Share of respondents |
-| ------------------------------------- | -------------------- |
-| Data quality and lineage              | 42%                  |
-| Sovereignty and regulatory compliance | 39%                  |
-| Security and privacy risk             | 39%                  |
-
-Notice what falls off that list. Model intelligence doesn't appear. Neither does prompt quality, nor the choice of orchestration tool. The real bottleneck comes down to operational data reliability. The report keeps coming back to four properties that enterprise AI needs to earn trust:
-
-| Property                   | Why it matters                         |
-| -------------------------- | -------------------------------------- |
-| Freshness and reliability  | prevents stale decisions in production |
-| Transparency and lineage   | makes audits and rollbacks possible    |
-| Interoperability           | avoids fragmented, incompatible agents |
-| Governance and sovereignty | satisfies the people who can say "no"  |
-
-That list also describes accurately what every FDE I know does on the side, somewhere among the integrations.
-
----
-
-## The agent data plane
-
-Enterprise AI needs an **Agent Data Plane**.
-
-I don't mean another orchestration tool or AI IDE or hosted copilot that the security team rejects in week three. I mean a deployable operational data foundation for autonomous systems. Concretely: it keeps enterprise context continuously in sync and fresh enough to trust. It manages lineage so audits stop feeling like a fire drill. And it gives FDEs and domain experts one shared surface where governance, evaluation, and handover all happen in the same place.
+Concretely: it keeps enterprise context continuously in sync and fresh enough to trust. It manages lineage so audits stop feeling like a fire drill. And it gives FDEs and domain experts one shared surface where governance, evaluation, and handover all happen in the same place.
 
 The architecture I keep sketching on whiteboards groups into four layers:
 
 ```mermaid
 flowchart BT
-  subgraph infra["Infrastructure layer"]
-    direction TB
-    K8S["Kubernetes / Terraform / Cloud"]
-    RUNTIME[/"Durable runtime <br>(Temporal-native)"/]
-    K8S --> RUNTIME
+  UX["Enterprise Custom UX"]
+  subgraph ops["Collaboration + eval layer"]
+    EVAL([Evaluation + Harness])
+    COLLAB[/Agent version control/]
+    COLLAB <--> EVAL
   end
   subgraph data["Operational data layer"]
-    direction TB
-    INTEGRATIONS{Integrations + APIs}
-    STORE[(Context store <br> + pipeline agents)]
+    INTEGRATIONS{Pipeline agents + API Integrations}
+    STORE[(Context store)]
     INTEGRATIONS --> STORE
   end
-  subgraph ops["Collaboration + eval layer"]
-    direction TB
-    EVAL([Evaluation + harness])
-    COLLAB[/Agent collaboration plane/]
-    EVAL --> COLLAB
+  subgraph infra["Infrastructure layer"]
+    RUNTIME[/"Durable runtime <br>(Temporal-native)"/]
+    K8S["Kubernetes / Terraform / Cloud"]
+    RUNTIME --> K8S
   end
-  UX["Enterprise UX <br> / frontend"]
   infra --> data --> ops --> UX
 ```
 
@@ -169,18 +163,18 @@ The shape of an engagement changes when this stack sits underneath:
 
 ```mermaid
 flowchart TB
-  subgraph today["Today: FDE-coupled engagement"]
-    direction TB
-    FDE1[FDE] --> GLUE[Slack threads <br>+ spreadsheets <br>+ tribal knowledge]
-    GLUE --> AGENT1[Agent in prod]
-    AGENT1 -.drift / outages.-> FDE1
-  end
   subgraph adp["With Agent Data Plane: FDE-independent operation"]
     direction TB
     FDE2[FDE] --> ADP[(Agent Data Plane)]
     ADP --> AGENT2[Agent in prod]
     CUSTOMER[Customer team] --> ADP
     AGENT2 -.iterate via eval gates.-> CUSTOMER
+  end
+  subgraph today["Today: FDE-coupled engagement"]
+    direction TB
+    FDE1[FDE] --> GLUE[Slack threads <br>+ spreadsheets <br>+ tribal knowledge]
+    GLUE --> AGENT1[Agent in prod]
+    AGENT1 -.drift / outages.-> FDE1
   end
 ```
 
@@ -251,7 +245,7 @@ The single number I find most striking sits in the post-launch row. Most FDE eng
 ```mermaid
 xychart
     title "FDE-hours per customer per month, post-launch"
-    x-axis [Common practice, Agent Data Plane]
+    x-axis ["Common practice", "Agent Data Plane"]
     y-axis "hours / customer / month" 0 --> 50
     bar [40, 4]
 ```
@@ -264,7 +258,9 @@ The "Common practice today" column swings wildly across engagements, and a skept
 
 The same survey found that 86% of organizations consider interoperability important or critical for AI systems. That number lines up with every procurement conversation I've ever sat through.
 
-Whatever the winning platform looks like, it can't lock customers into a hosted SaaS they don't control. It can't replace the enterprise infrastructure they already paid for. And it can't ship a proprietary deployment model that the customer's security team would veto. It has to slot into Kubernetes, Terraform, existing cloud accounts, existing CI/CD, and the customer's security model without asking permission.
+Whatever the winning platform looks like, it can't lock customers into a hosted SaaS they don't control. It can't replace the enterprise infrastructure they already paid for. And it can't ship a proprietary deployment model that the customer's security team would veto.
+
+It has to slot into Kubernetes, Terraform, existing cloud accounts, existing CI/CD, and the customer's security model without asking permission.
 
 So I keep ending up at the same architectural bet: deployable, Kubernetes-native, operational data infrastructure. Anything that doesn't deploy into the customer's environment gets caught at the procurement door.
 
@@ -280,7 +276,12 @@ The handover stands out as the most underrated failure mode in enterprise AI. Mo
 - workflows drifted as the business changed,
 - and the evaluation loops disappeared after launch.
 
-The customer ends up permanently dependent on the original FDE, which feels great for billable hours and terrible for everyone's sanity, including the FDE's. A real Agent Data Plane changes that shape. The enterprise team keeps iterating on prompts and inspecting analytics on their own. They evolve KPIs against the same eval suite the FDE used. Production workflows keep running without permission from a vendor. The FDE can move on. The engagement succeeded at that moment, not at the moment the agent first shipped.
+The customer ends up permanently dependent on the original FDE, which feels great for billable hours and terrible for everyone's sanity, including the FDE's.
+
+A real Agent Data Plane changes that shape: the enterprise team keeps iterating on prompts and inspecting analytics on their own.
+They evolve KPIs against the same eval suite the FDE used. Production workflows keep running without permission from a vendor.
+
+The FDE can move on. The engagement succeeded at that moment, not at the moment the agent first shipped.
 
 ---
 
@@ -290,7 +291,11 @@ I increasingly think coding shifts away from humans writing applications and tow
 
 Coding agents already write more of the code each quarter. APIs, integrations, infrastructure, workflows, orchestration. The human bottleneck moves upward, into evaluation, operational semantics, trust, governance, workflow correctness, and business alignment. That shift doesn't count as a downgrade. That work counts as the interesting part.
 
-Forward Deployed Engineers, in that world, become operational architects for autonomous systems. The companies that win enterprise AI probably don't come from the camp with the best models or prompts or orchestration. They come from the camp that gets enterprise context into production fastest while keeping the data foundation reliable as everyone else's drifts. They also come from the camp that hands over systems cleanly enough that the customer keeps improving production workflows long after launch, with no permanent vendor seat required.
+Forward Deployed Engineers, in that world, become **operational architects for autonomous systems**.
+
+The companies that win enterprise AI probably don't come from the camp with the best models or prompts or orchestration. They come from the camp that gets enterprise context into production fastest while keeping the data foundation reliable as everyone else's drifts.
+
+They also come from the camp that hands over systems cleanly enough that the customer keeps improving production workflows long after launch, with no permanent vendor seat required.
 
 The companies that build the Agent Data Plane, in short, even if they end up calling it something else.
 
@@ -298,6 +303,6 @@ The companies that build the Agent Data Plane, in short, even if they end up cal
 
 ## So what?
 
-If you find yourself an FDE drowning in Slack threads, spreadsheets, and screenshots while pretending the pile of them counts as a deployment process, you don't stand alone, and you probably build the same platform every other FDE keeps building. If you scale an FDE team past 50 people and you've started to notice the same dashboard get rewritten three times, take that as the signal.
+If you find yourself an FDE drowning in Slack threads, spreadsheets, and screenshots while pretending the pile of them counts as a deployment process, you don't stand alone, and you probably build the same platform every other FDE keeps building. If you scale an FDE team past 10 people and you've started to notice the same dashboard get rewritten three times, take that as the signal.
 
 I spend most of my time on this problem now. If any of this resonates, or if you build (or buy) something in the shape of an Agent Data Plane, I would love to hear how you think about it.
