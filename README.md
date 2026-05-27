@@ -26,9 +26,9 @@ Want to run the site locally? Use the same setup as [GitHub Pages with Jekyll](h
 
 ## Run Vale to lint prose
 
-I use [Vale](https://vale.sh/) to lint Markdown for style and readability. Install Vale (`brew install vale`), sync packages, then run the commands below.
+I use [Vale](https://vale.sh/) to lint Markdown for style and readability. Install Vale (`brew install vale`), sync packages once, then run the linter.
 
 ```bash
-vale sync
-vale .
+make sync   # one-time: downloads style packages into styles/
+make lint   # lint prose
 ```

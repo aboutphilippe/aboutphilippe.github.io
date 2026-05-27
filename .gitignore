@@ -16,6 +16,11 @@ vendor/bundle/
 .DS_Store
 Thumbs.db
 
+# Python (helper scripts)
+scripts/.venv/
+scripts/.ruff_cache/
+scripts/.env
+
 # Vale: synced packages go in styles/ (vale sync). Only styles/Personal/ is committed.
 styles/*
 !styles/Personal/
@@ -33,3 +38,5 @@ styles/*
 .sass-cache
 
 .env
+
+.cursor/
