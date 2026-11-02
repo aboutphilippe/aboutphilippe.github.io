@@ -45,5 +45,5 @@ To preview drafts locally without mixing them into the live site:
 make serve-drafts   # http://127.0.0.1:4001 , output in _site-drafts/
 ```
 
-When a draft is ready, move it into `_posts/` with a dated filename (`YYYY-MM-DD-slug.md`) and drop `published: false`.
+To publish a draft, move it into `_posts/` with a dated filename (`YYYY-MM-DD-slug.md`) and drop `published: false`.
 
