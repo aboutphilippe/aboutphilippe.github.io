@@ -10,6 +10,21 @@ og_image: /assets/og.png
 # Include list
 include: [llms.txt]
 
+# Keep build outputs and Vale styles out of the site (stops the two preview servers rebuilding each other)
+exclude:
+  - _site-drafts
+  - styles
+  - .sass-cache
+  - .jekyll-cache
+  - gemfiles
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
 posthog:
   api_key: "phc_T9KlL0KEXo2JOUNNcR4q2WkvtbBwUgQTgLdBuJzg3dG"
   api_host: "https://t.aboutphilippe.com"

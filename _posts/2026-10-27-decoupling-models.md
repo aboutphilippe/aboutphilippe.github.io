@@ -204,7 +204,7 @@ So the work lies in making heterogeneous models easy to wire into software, with
 
 ---
 
-## Predictive models over shared history
+## The next foundation model
 
 Decision models chip away at classification jobs in the data stack. The harder gap sits one layer up.
 
@@ -230,4 +230,4 @@ Imagine a foundation model class that sits on that shared history and makes pred
 
 I spend most of my time on that new predictive primitive: letting developers build systems that learn from observation, action, and outcome history, and helping coding agents, personal systems, and physical systems ask what happens next before they act.
 
-Building toward the same stack? Feeling the data stack buckle under questions nobody designed it to answer? I would love to hear how you think about it.
+Building toward the same? Feeling the data stack could collapse under questions nobody designed it to answer? Or thinking about how super dark factories might move through data to reach our objectives? I would love to hear how you think about it.
