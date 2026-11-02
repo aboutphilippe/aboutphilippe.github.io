@@ -40,3 +40,5 @@ styles/*
 .env
 
 .cursor/
+_site-drafts/
+_site-drafts

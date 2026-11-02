@@ -20,7 +20,7 @@ jobs:
 
       - name: Install Vale
         run: |
-          VALE_VERSION="v3.0.0"
+          VALE_VERSION="v3.9.5"
           wget -q "https://github.com/errata-ai/vale/releases/download/${VALE_VERSION}/vale_${VALE_VERSION#v}_Linux_64-bit.tar.gz"
           sudo tar -C /usr/local/bin -xzf "vale_${VALE_VERSION#v}_Linux_64-bit.tar.gz" vale
           vale -v
@@ -36,3 +36,5 @@ jobs:
           files: index.md README.md _posts
           reporter: github-pr-check
           fail_on_error: true
+          version: 3.9.5
+          vale_flags: "--minAlertLevel=error"
