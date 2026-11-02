@@ -32,3 +32,18 @@ I use [Vale](https://vale.sh/) to lint Markdown for style and readability. Insta
 make sync   # one-time: downloads style packages into styles/
 make lint   # lint prose
 ```
+
+## Drafts vs published posts
+
+Published writing lives in `_posts/` and appears on the homepage, sitemap, and robots-allowed site.
+
+Work-in-progress articles live in `_drafts/` (plus notes in `_editorial/`). A normal `make serve` / `make build` never includes them, so they stay out of `sitemap.xml` and the public Writing list.
+
+To preview drafts locally without mixing them into the live site:
+
+```bash
+make serve-drafts   # http://127.0.0.1:4001 , output in _site-drafts/
+```
+
+When a draft is ready, move it into `_posts/` with a dated filename (`YYYY-MM-DD-slug.md`) and drop `published: false`.
+

@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# Draft previews are local-only (_drafts/, _site-drafts/) and must not be crawled.
+Disallow: /_drafts/
+Disallow: /_editorial/
+Disallow: /_site-drafts/
+
 Sitemap: https://aboutphilippe.com/sitemap.xml
