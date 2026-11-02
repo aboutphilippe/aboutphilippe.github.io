@@ -196,7 +196,7 @@ Over the last few years, working on production agent systems, I keep ending up w
 
 ---
 
-## Current stack vs agent data plane
+## Current stack versus an agent data plane
 
 Most prototype stacks today look something like the left column. They work for a demo. They struggle by the 6-month operational review:
 

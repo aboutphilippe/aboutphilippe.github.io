@@ -207,7 +207,7 @@ Vercel's GTM team offers a good reference use case in what they did with their c
 
 I've built and benchmarked a prototype in this direction (**Rust** for ingest, indexer, and query nodes, with **S3-compatible object storage** as the only durable store) so it can run as serverless that scales (stateless, scale-out, object storage only). A few lessons so far.
 
-**Warm path sits in good shape.** For vector-only and text-only queries at modest QPS, latency lands where I'd hope: single-digit to low tens of milliseconds (e.g. vector warm ~2.8 ms p50, text warm ~4.7 ms p50 at 10k docs, 40 QPS). Hybrid warm runs a bit higher but still reasonable (~27 ms p50). So the core "load shard, run BM25 + vector, merge" path works.
+**Warm path sits in good shape.** For vector-only and text-only queries at modest QPS, latency lands where I'd hope: single-digit to low tens of milliseconds (e.g. vector warm ~2.8 ms p50, text warm ~4.7 ms p50 at 10k docs, 40 QPS). Hybrid warm runs a bit higher but still reasonable (~27 ms p50). So the main path works: load a shard, then run and merge BM25 + vector results.
 
 **Cold and filter-heavy paths dominate the pain.** When shards sit uncached or when you add heavy filters (e.g. many entity IDs, time ranges), tail latency blows up (e.g. hybrid cold p99 in the tens of seconds in early runs. That marks the main gap vs. "napkin math": cache locality and filter evaluation cost. The next bets focus on filter-first candidate reduction and better shard prefetch. Keeping hot loops SIMD-friendly comes next (more below).
 
@@ -242,7 +242,7 @@ xychart
 | ------------ | ------ | ---------------------------------------------- |
 | Warm vector  | Good   | Single-digit ms p50, strong baseline           |
 | Warm text    | Good   | Low ms p50, strong baseline                    |
-| Hybrid warm  | Usable | ~27 ms p50, core merge path works              |
+| Hybrid warm  | Usable | ~27 ms p50, the merge path works               |
 | Hybrid cold  | Pain   | p99 in tens of seconds, cache/shard bottleneck |
 | Filter-heavy | Pain   | Tail latency, filter-first reduction needed    |
 
