@@ -7,7 +7,7 @@ description: "Want to connect? You can find me at the links below."
 ## About
 
 San Francisco based and 3× founder, currently founder & CTO at [restack](https://restack.io).
-Coding since 1997, building high-performance infrastructure, distributed systems, and developer tooling. Focus on AI systems, open-source infrastructure, and enterprise platforms that scale.
+Coding since 1997, building high-performance infrastructure, distributed systems, and developer tooling. Focus on AI systems, open source infrastructure, and enterprise platforms that scale.
 
 Born in France, married to Priyanka, founder & CEO at [nubrain](https://nubrain.com), and often found traveling the world, sailing or flying, together.
 

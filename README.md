@@ -35,7 +35,7 @@ make lint   # lint prose
 
 ## Drafts vs published posts
 
-Published writing lives in `_posts/` and appears on the homepage, sitemap, and robots-allowed site.
+Published writing goes in `_posts/` and appears on the homepage, sitemap, and robots-allowed site.
 
 Work-in-progress articles live in `_drafts/` (plus notes in `_editorial/`). A normal `make serve` / `make build` never includes them, so they stay out of `sitemap.xml` and the public Writing list.
 
